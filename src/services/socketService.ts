@@ -1,14 +1,19 @@
 import { io, Socket } from "socket.io-client";
 import AppConstants from "@/constants/appconstants";
-import { ReviewProgress, FinalResults } from "@/lib/types/review";
+import {
+  ReviewProgress,
+  FinalResults,
+  ReviewStartedData,
+  ReviewErrorData,
+} from "@/lib/types/review";
 
 export class SocketService {
   private socket: Socket | null = null;
   private callbacks: {
     onConnect?: (socketId: string) => void;
-    onReviewStarted?: (data: any) => void;
+    onReviewStarted?: (data: ReviewStartedData) => void;
     onReviewProgress?: (data: ReviewProgress) => void;
-    onReviewError?: (data: any) => void;
+    onReviewError?: (data: ReviewErrorData) => void;
     onReviewDone?: (data: FinalResults) => void;
     onDisconnect?: () => void;
     onConnectError?: (error: Error) => void;

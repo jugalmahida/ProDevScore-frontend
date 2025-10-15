@@ -31,8 +31,9 @@ export const useCodeReview = () => {
         topCommits: commitCount,
         socketId,
       });
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error) {
+      console.error("Code review error", error);
+      // alert(error.message);
       setIsReviewing(false);
     }
   };

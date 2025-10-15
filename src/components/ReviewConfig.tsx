@@ -3,6 +3,7 @@ import { Progress } from "@/components/ui/progress";
 import { Clock, GitCommit, User } from "lucide-react";
 import { useReviewStore } from "@/store/reviewStore";
 import { useCodeReview } from "@/hooks/useCodeReview";
+import Image from "next/image";
 
 export const ReviewConfig = () => {
   const {
@@ -21,7 +22,7 @@ export const ReviewConfig = () => {
 
   return (
     <div className="w-full mt-8 max-w-md bg-gray-900/90 backdrop-blur-lg border border-gray-700 rounded-xl p-6 flex flex-col items-center text-white shadow-md">
-      <img
+      <Image
         src={selectedContributor.avatar_url}
         alt={selectedContributor.login}
         className="w-24 h-24 rounded-full border-2 border-violet-500 mb-4"

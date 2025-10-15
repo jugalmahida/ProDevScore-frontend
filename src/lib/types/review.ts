@@ -1,5 +1,17 @@
 import { Socket } from "socket.io-client";
 
+export interface ReviewStartedData {
+  total: number;
+  message: string;
+}
+
+export interface ReviewErrorData {
+  reviewed: number;
+  total: number;
+  commit: string;
+  error: string;
+}
+
 export interface ReviewProgress {
   reviewed: number;
   total: number;

@@ -1,9 +1,7 @@
 "use client"
 import { HoverEffect } from "@/components/ui/card-hover-effect";
 import {
-  IconCurrencyDollar,
   IconEaseInOut,
-  IconTerminal2,
 } from "@tabler/icons-react";
 
 export function Pricing() {

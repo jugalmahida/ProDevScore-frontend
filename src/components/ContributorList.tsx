@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useReviewStore } from "@/store/reviewStore";
 import { Contributor } from "@/lib/types/review";
+import Image from "next/image";
 
 interface ContributorListProps {
   contributors: Contributor[];
@@ -34,7 +35,7 @@ export const ContributorList = ({ contributors }: ContributorListProps) => {
               className="cursor-pointer bg-gray-900/90 backdrop-blur-lg border border-gray-700 rounded-xl p-5 flex flex-col items-center text-white shadow-md hover:shadow-lg hover:ring-2 hover:ring-indigo-500 transition-all group"
               title="Click to select contributor"
             >
-              <img
+              <Image
                 src={contributor.avatar_url}
                 alt={contributor.login}
                 className="w-16 h-16 rounded-full border-2 border-violet-500 mb-2"

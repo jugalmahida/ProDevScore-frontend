@@ -17,7 +17,7 @@ export const useSocket = () => {
         setSocketId(socketId);
         setSocket(socket);
       },
-      onReviewStarted: (data) => {
+      onReviewStarted: () => {
         setIsReviewing(true);
       },
       onReviewProgress: (data) => {

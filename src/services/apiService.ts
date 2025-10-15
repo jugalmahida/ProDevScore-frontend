@@ -35,11 +35,9 @@ export class ApiService {
       }
 
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error starting review:", error);
-      throw new Error(
-        error.response?.data?.message || "Failed to start code review"
-      );
+      throw new Error("Failed to start code review");
     }
   }
 }

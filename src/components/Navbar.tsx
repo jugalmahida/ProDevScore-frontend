@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/resizable-navbar";
 import Link from "next/link";
 import { useState } from "react";
-import { useTheme } from "next-themes";
 
 export function FloatingNavbar() {
   const navItems = [
@@ -31,7 +30,6 @@ export function FloatingNavbar() {
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { setTheme } = useTheme();
 
   return (
     <div className="fixed top-5 z-50 w-full">
