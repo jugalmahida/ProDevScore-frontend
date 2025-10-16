@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { IconUser, IconLogout } from "@tabler/icons-react";
 
@@ -26,7 +27,6 @@ export function FloatingNavbar() {
       name: "Pricing",
       link: "#pricing",
     },
-    
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,7 +34,9 @@ export function FloatingNavbar() {
   // Get authenticated state and user from auth store
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
+
+  // Use the useAuth hook for logout
+  const { logout } = useAuth();
   const router = useRouter();
 
   // Dropdown open state
@@ -66,10 +68,16 @@ export function FloatingNavbar() {
     return (firstInitial + lastInitial).toUpperCase();
   };
 
-  // Logout handler
-  const handleLogout = () => {
-    logout();
-    router.push("/login");
+  // Logout handler - now properly calls API and clears store
+  const handleLogout = async () => {
+    try {
+      await logout(); // This calls the API and clears the store
+      router.replace("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Still redirect to login even if API call fails
+      router.replace("/");
+    }
   };
 
   return (

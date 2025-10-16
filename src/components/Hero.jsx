@@ -1,27 +1,17 @@
 "use client";
 import React from "react";
-import { useEffect, useState } from "react";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import Link from "next/link";
+import { useAuthStore } from "@/store/authStore";
 
 export function Hero() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    // Check cookie presence (client-side)
-    const cookies = document.cookie.split("; ").map((c) => c.split("=")[0]);
-    const hasToken = cookies.includes("accessToken");
-    setIsLoggedIn(hasToken);
-  }, []);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   // Conditional link based on authentication state
-  const targetHref = isLoggedIn
+  const targetHref = isAuthenticated
     ? "/generate-review"
-    : {
-        pathname: "/login",
-        query: { redirect: "/generate-review" },
-      };
+    : "/login?redirect=/generate-review";
 
   return (
     <BackgroundLines className="flex items-center justify-center w-full flex-col px-4">
