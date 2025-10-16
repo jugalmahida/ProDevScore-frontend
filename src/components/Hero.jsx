@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
@@ -15,7 +15,12 @@ export function Hero() {
         out of 100. Instant insights into their coding performance based on
         Correctness, Readability, Security, Maintainability.
       </p>
-      <Link href="/generate-review">
+      <Link
+        href={{
+          pathname: "/login",
+          query: { redirect: "/generate-review" },
+        }}
+      >
         <HoverBorderGradient
           containerClassName="rounded-full mt-5 cursor-pointer"
           as="button"

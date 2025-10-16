@@ -36,6 +36,8 @@ export const ContributorList = ({ contributors }: ContributorListProps) => {
               title="Click to select contributor"
             >
               <Image
+                width={64}
+                height={64}
                 src={contributor.avatar_url}
                 alt={contributor.login}
                 className="w-16 h-16 rounded-full border-2 border-violet-500 mb-2"

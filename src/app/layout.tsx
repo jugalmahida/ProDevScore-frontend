@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Fira_Sans } from "next/font/google";
+
 import "./globals.css";
+
+const fira = Fira_Sans({
+  weight: "400",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Pro DevScore",
@@ -17,7 +24,7 @@ export default function RootLayout({
     <>
       <html lang="en" suppressHydrationWarning>
         <head />
-        <body>
+        <body className={`${fira.className} antialiased`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

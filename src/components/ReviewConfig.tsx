@@ -23,6 +23,8 @@ export const ReviewConfig = () => {
   return (
     <div className="w-full mt-8 max-w-md bg-gray-900/90 backdrop-blur-lg border border-gray-700 rounded-xl p-6 flex flex-col items-center text-white shadow-md">
       <Image
+        width={128}
+        height={128}
         src={selectedContributor.avatar_url}
         alt={selectedContributor.login}
         className="w-24 h-24 rounded-full border-2 border-violet-500 mb-4"
