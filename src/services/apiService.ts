@@ -30,7 +30,7 @@ export class ApiService {
 
   async logoutUser() {
     try {
-      const response = await apiClient.post(`/user/logout`);
+      const response = await apiClient.post(`/user/logoutUser`);
       return response.data;
     } catch (error) {
       console.error("Error login user:", error);
