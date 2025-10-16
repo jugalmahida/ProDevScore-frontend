@@ -25,7 +25,7 @@ export default function Profile() {
 
         {/* Description */}
         <p className="max-w-2xl mx-auto text-base md:text-lg text-neutral-700 dark:text-neutral-400 mt-6 mb-8 leading-relaxed">
-          We're building an amazing profile experience where you'll be able to
+          We are building an amazing profile experience where you will be able to
           view your code review history.
         </p>
 
@@ -75,7 +75,7 @@ export default function Profile() {
 
         {/* Additional Info */}
         <p className="text-sm text-neutral-500 dark:text-neutral-500 mt-8">
-          Want updates? We'll notify you when your profile page goes live.
+          Want updates? We will notify you when your profile page goes live.
         </p>
       </div>
     </BackgroundLines>
