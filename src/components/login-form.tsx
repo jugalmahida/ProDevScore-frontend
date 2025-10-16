@@ -34,17 +34,9 @@ export function LoginForm({
       const redirectTo = searchParams.get("redirect") || "/";
       router.replace(redirectTo);
       router.refresh(); // Force refresh to update navbar
-    } catch (err: any) {
+    } catch (err) {
       console.error("Login error:", err);
-
-      // Better error handling
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else if (err.message) {
-        setError(err.message);
-      } else {
-        setError("Login failed. Please check your credentials.");
-      }
+      setError("Login failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
