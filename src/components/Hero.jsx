@@ -1,10 +1,28 @@
 "use client";
 import React from "react";
+import { useEffect, useState } from "react";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import Link from "next/link";
 
 export function Hero() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check cookie presence (client-side)
+    const cookies = document.cookie.split("; ").map((c) => c.split("=")[0]);
+    const hasToken = cookies.includes("accessToken");
+    setIsLoggedIn(hasToken);
+  }, []);
+
+  // Conditional link based on authentication state
+  const targetHref = isLoggedIn
+    ? "/generate-review"
+    : {
+        pathname: "/login",
+        query: { redirect: "/generate-review" },
+      };
+
   return (
     <BackgroundLines className="flex items-center justify-center w-full flex-col px-4">
       <h2 className="bg-clip-text text-transparent text-center bg-gradient-to-b from-neutral-900 to-neutral-700 dark:from-neutral-600 dark:to-white text-2xl md:text-4xl lg:text-7xl font-sans py-2 md:py-10 relative z-20 font-bold tracking-tight">
@@ -15,12 +33,8 @@ export function Hero() {
         out of 100. Instant insights into their coding performance based on
         Correctness, Readability, Security, Maintainability.
       </p>
-      <Link
-        href={{
-          pathname: "/login",
-          query: { redirect: "/generate-review" },
-        }}
-      >
+
+      <Link href={targetHref}>
         <HoverBorderGradient
           containerClassName="rounded-full mt-5 cursor-pointer"
           as="button"

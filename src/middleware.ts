@@ -2,19 +2,19 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const url = request.nextUrl.clone();
-  const token = request.cookies.get("accessToken");
+  const token = request.cookies.get("accessToken")?.value;
+  const { pathname } = request.nextUrl;
 
-  // Redirect logged-in users away from login page to dashboard
-  if ((url.pathname === "/login") && token) {
-    url.pathname = "/";
-    return NextResponse.redirect(url);
+  // Redirect logged-in users away from login
+  if (pathname === "/login" && token) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // Protect /generate-review; redirect unauthenticated users to login page
-  if (url.pathname.startsWith("/generate-review") && !token) {
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+  // Protect /generate-review
+  if (pathname.startsWith("/generate-review") && !token) {
+    const redirectUrl = new URL("/login", request.url);
+    redirectUrl.searchParams.set("redirect", "/generate-review");
+    return NextResponse.redirect(redirectUrl);
   }
 
   return NextResponse.next();
