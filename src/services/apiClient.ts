@@ -4,6 +4,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { cookies } from "next/headers";
 import { refreshTokenAction } from "@/actions/auth.action";
 import { Tokens } from "@/lib/types/auth";
+
 export const serverApiClient = async () => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
@@ -18,7 +19,7 @@ export const serverApiClient = async () => {
     .join("; ");
 
   const serverClient = axios.create({
-    baseURL: AppConstants.localApiUrl,
+    baseURL: AppConstants.apiUrl,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

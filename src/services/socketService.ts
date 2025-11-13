@@ -22,7 +22,7 @@ export class SocketService {
   connect(callbacks: typeof this.callbacks) {
     this.callbacks = callbacks;
     // AppConstants.apiHome
-    this.socket = io(AppConstants.localApiHome, {
+    this.socket = io(AppConstants.apiHome, {
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionDelay: 1000,
