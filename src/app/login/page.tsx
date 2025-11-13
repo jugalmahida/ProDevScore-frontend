@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/login-form";
+import { LoaderOne } from "@/components/ui/loader";
 import { Suspense } from "react";
 
 export default function LoginPage() {
@@ -8,19 +9,16 @@ export default function LoginPage() {
         <p className="flex items-center gap-2 self-center font-medium text-3xl">
           ProDevScore/Login
         </p>
-        <Suspense fallback={<LoginFormSkeleton />}>
+        <Suspense
+          fallback={
+            <div className="flex justify-center">
+              <LoaderOne />
+            </div>
+          }
+        >
           <LoginForm />
         </Suspense>
       </div>
-    </div>
-  );
-}
-
-// Optional: Loading skeleton
-function LoginFormSkeleton() {
-  return (
-    <div className="w-full max-w-sm animate-pulse">
-      <div className="h-[400px] rounded-lg bg-gray-200" />
     </div>
   );
 }

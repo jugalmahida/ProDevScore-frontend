@@ -3,13 +3,13 @@ import React from "react";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import Link from "next/link";
-import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/hooks/useAuth";
 
 export function Hero() {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { user } = useAuth();
 
   // Conditional link based on authentication state
-  const targetHref = isAuthenticated
+  const targetHref = user
     ? "/generate-review"
     : "/login?redirect=/generate-review";
 
@@ -30,7 +30,7 @@ export function Hero() {
           as="button"
           className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2"
         >
-          <span>Try for free</span>
+          <span>{user ? "Get Started" : "Try for free"}</span>
         </HoverBorderGradient>
       </Link>
     </BackgroundLines>

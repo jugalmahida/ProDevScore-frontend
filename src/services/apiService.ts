@@ -1,70 +1,113 @@
-import { apiClient } from "./apiClient";
+import { AxiosInstance } from "axios";
+import { serverApiClient } from "./apiClient";
 
-export interface StartReviewPayload {
-  githubUrl: string;
-  login: string;
-  topCommits: number;
-  socketId: string;
-}
-
-export interface GetContributorsPayload {
-  githubUrl: string;
-}
-
-export interface LoginPayload {
-  email: string;
-  password: string;
-}
+import {
+  LoginPayload,
+  RegisterPayload,
+  VerifyCodePayload,
+  ForgetPasswordPayload,
+  VerifyTokenAndSetPasswordPayload,
+  ChangePasswordPayload,
+  GetContributorsPayload,
+  StartReviewPayload,
+} from "@/lib/types/auth";
 
 export class ApiService {
+  private apiClient: AxiosInstance;
+
+  constructor(client: AxiosInstance) {
+    this.apiClient = client;
+  }
+
   async loginUser(payload: LoginPayload) {
+    const response = await this.apiClient.post(`/user/login`, payload);
+    return response.data;
+  }
+
+  async getCurrentUser() {
+    const response = await this.apiClient.get(`/user/me`);
+    return response.data;
+  }
+
+  async registerUser(payload: RegisterPayload) {
+    const response = await this.apiClient.post(`/user/register`, payload);
+    return response.data;
+  }
+
+  async verifyCode(payload: VerifyCodePayload) {
+    const response = await this.apiClient.post(`/user/verifyCode`, payload);
+    return response.data;
+  }
+
+  async refreshTokens() {
+    const response = await this.apiClient.post(`/user/refresh-tokens`);
+    return response.data;
+  }
+
+  async forgetPassword(payload: ForgetPasswordPayload) {
+    const response = await this.apiClient.post(
+      `/user/forget-password`,
+      payload
+    );
+    return response;
+  }
+
+  async verifyTokenAndSetPassword(payload: VerifyTokenAndSetPasswordPayload) {
+    const response = await this.apiClient.post(
+      `/user/verifyToken/${encodeURIComponent(payload.token)}`,
+      { newPassword: payload.newPassword }
+    );
+    return response;
+  }
+
+  async changePassword(payload: ChangePasswordPayload) {
     try {
-      const response = await apiClient.post(`/user/login`, payload);
-      console.log(response.headers);
+      const response = await this.apiClient.patch(
+        `/user/change-password`,
+        payload
+      );
       return response.data;
     } catch (error) {
-      console.error("Error login user:", error);
+      console.error("Error change password:", error);
+      throw error;
+    }
+  }
+
+  async getCurrentUserSubscription() {
+    try {
+      const response = await this.apiClient.get(`/user/subscription`);
+      return response.data;
+    } catch (error) {
+      console.error("Error Current User Subscription:", error);
       throw error;
     }
   }
 
   async logoutUser() {
-    try {
-      const response = await apiClient.post(`/user/logoutUser`);
-      return response.data;
-    } catch (error) {
-      console.error("Error login user:", error);
-      throw error;
-    }
+    const response = await this.apiClient.post(`/user/logout`);
+    return response;
   }
 
   async getContributors(payload: GetContributorsPayload) {
-    try {
-      const response = await apiClient.post(`/review/getContributors`, payload);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching contributors:", error);
-      throw error;
-    }
+    const response = await this.apiClient.post(
+      `/review/getContributors`,
+      payload
+    );
+    return response.data;
   }
 
   async startReview(payload: StartReviewPayload) {
-    try {
-      const response = await apiClient.post(
-        `/review/analysis`,
-        payload
-      );
+    const response = await this.apiClient.post(`/review/analysis`, payload);
 
-      if (!response.data.success) {
-        throw new Error(response.data.message || "Failed to start review");
-      }
-
-      return response.data;
-    } catch (error) {
-      console.error("Error starting review:", error);
-      throw new Error("Failed to start code review");
+    if (!response.data.success) {
+      throw new Error(response.data.message || "Failed to start review");
     }
+
+    return response.data;
   }
 }
 
-export const apiService = new ApiService();
+export const createServerApiService = async () => {
+  const client = await serverApiClient();
+  return new ApiService(client);
+};

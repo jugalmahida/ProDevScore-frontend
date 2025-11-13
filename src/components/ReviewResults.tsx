@@ -2,18 +2,22 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, TrendingUp, GitCommit } from "lucide-react";
-import { useReviewStore } from "@/store/reviewStore";
 import { getScoreColor, getScoreLabel } from "@/utils/reviewUtils";
+import { Contributor, FinalResults } from "@/lib/types/review";
 
-export const ReviewResults = () => {
-  const {
-    finalResults,
-    selectedContributor,
-    setFinalResults,
-    setSelectedContributor,
-    resetAll,
-  } = useReviewStore();
+interface ReviewResultsProps {
+  finalResults: FinalResults;
+  selectedContributor: Contributor;
+  setFinalResults: (value: FinalResults | null) => void;
+  setSelectedContributor: (value: Contributor | null) => void;
+}
 
+export const ReviewResults = ({
+  finalResults,
+  selectedContributor,
+  setFinalResults,
+  setSelectedContributor,
+}: ReviewResultsProps) => {
   if (!finalResults || !selectedContributor) return null;
 
   return (
@@ -120,12 +124,12 @@ export const ReviewResults = () => {
           Review Another Contributor
         </Button>
 
-        <Button
+        {/* <Button
           onClick={resetAll}
           className="bg-gradient-to-r from-indigo-500 to-violet-700"
         >
           Start New Review
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

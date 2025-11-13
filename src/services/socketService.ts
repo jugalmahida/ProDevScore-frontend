@@ -21,8 +21,8 @@ export class SocketService {
 
   connect(callbacks: typeof this.callbacks) {
     this.callbacks = callbacks;
-
-    this.socket = io(AppConstants.apiHome, {
+    // AppConstants.apiHome
+    this.socket = io(AppConstants.localApiHome, {
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionDelay: 1000,
@@ -37,7 +37,7 @@ export class SocketService {
     if (!this.socket) return;
 
     this.socket.on("connect", () => {
-      console.log("Connected to socket server:", this.socket?.id);
+      // console.log("Connected to socket server:", this.socket?.id);
       if (this.socket?.id && this.callbacks.onConnect) {
         this.callbacks.onConnect(this.socket.id);
       }
@@ -49,12 +49,12 @@ export class SocketService {
     });
 
     this.socket.on("reviewStarted", (data) => {
-      console.log("Review started:", data);
+      // console.log("Review started:", data);
       this.callbacks.onReviewStarted?.(data);
     });
 
     this.socket.on("reviewProgress", (data: ReviewProgress) => {
-      console.log("Review progress:", data);
+      // console.log("Review progress:", data);
       this.callbacks.onReviewProgress?.(data);
     });
 
@@ -64,7 +64,7 @@ export class SocketService {
     });
 
     this.socket.on("reviewDone", (data: FinalResults) => {
-      console.log("Review completed:", data);
+      // console.log("Review completed:", data);
       this.callbacks.onReviewDone?.(data);
     });
 

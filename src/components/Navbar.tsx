@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Navbar,
   NavBody,
@@ -10,40 +11,26 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
+
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { useAuthStore } from "@/store/authStore";
 import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
 import { IconUser, IconLogout } from "@tabler/icons-react";
+
+// Usage UI components you created
+import { UsagePill } from "@/components/UsagePill";
+import { UsageDropdownCard } from "@/components/UsageDropdownCard";
 
 export function FloatingNavbar() {
   const navItems = [
-    {
-      name: "Features",
-      link: "#features",
-    },
-    {
-      name: "Pricing",
-      link: "#pricing",
-    },
+    { name: "Features", link: "#features" },
+    { name: "Pricing", link: "#pricing" },
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Get authenticated state and user from auth store
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const user = useAuthStore((state) => state.user);
-
-  // Use the useAuth hook for logout
-  const { logout } = useAuth();
-  const router = useRouter();
-
-  // Dropdown open state
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown if clicked outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -59,7 +46,8 @@ export function FloatingNavbar() {
     };
   }, []);
 
-  // Extract initials from fullName
+  const { logout, user } = useAuth();
+
   const getInitials = (fullName?: string) => {
     if (!fullName) return "";
     const names = fullName.trim().split(" ");
@@ -68,17 +56,28 @@ export function FloatingNavbar() {
     return (firstInitial + lastInitial).toUpperCase();
   };
 
-  // Logout handler - now properly calls API and clears store
   const handleLogout = async () => {
-    try {
-      await logout(); // This calls the API and clears the store
-      router.replace("/");
-    } catch (error) {
-      console.error("Logout failed:", error);
-      // Still redirect to login even if API call fails
-      router.replace("/");
-    }
+    setDropdownOpen(false);
+    await logout();
   };
+
+  // Derive usage numbers safely from your typed user object
+  const subs = user?.subscriptionsDetails;
+  const limits = subs?.currentPlan?.limits;
+  const usage = subs?.currentUsage;
+  
+  const commitsUsed = usage?.totalCommits ?? 0;
+  const commitsTotal = limits?.totalCommitReviews ?? 0;
+
+  const reposUsed = Array.isArray(usage?.usedRepositories)
+    ? usage!.usedRepositories.length
+    : usage?.totalRepositories ?? 0;
+  const reposTotal = limits?.repositories ?? 0;
+
+  const contribUsed = Array.isArray(usage?.usedContributors)
+    ? usage!.usedContributors.length
+    : usage?.totalContributors ?? 0;
+  const contribTotal = limits?.contributors ?? 0;
 
   return (
     <div className="fixed top-5 z-50 w-full">
@@ -88,7 +87,7 @@ export function FloatingNavbar() {
           <NavbarLogo />
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
-            {!isAuthenticated ? (
+            {!user ? (
               <>
                 <NavbarButton as={Link} href="/login" variant="secondary">
                   Login
@@ -98,36 +97,61 @@ export function FloatingNavbar() {
                 </NavbarButton>
               </>
             ) : (
-              <div className="relative" ref={dropdownRef}>
-                {/* Profile circle with initials */}
-                <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  aria-label="Toggle profile menu"
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-neutral-900 to-neutral-700 dark:from-neutral-600 dark:to-white text-white dark:text-black font-semibold cursor-pointer select-none"
-                >
-                  {getInitials(user?.fullName)}
-                </button>
-
-                {/* Dropdown menu */}
-                {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-40 rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-lg py-1 z-50 font-sans">
-                    <Link
-                      href="/profile"
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
-                      onClick={() => setDropdownOpen(false)}
-                    >
-                      <IconUser />
-                      Profile
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="flex w-full items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 cursor-pointer"
-                    >
-                      <IconLogout />
-                      Logout
-                    </button>
-                  </div>
+              <div className="flex items-center gap-4">
+                {/* Compact usage pill (desktop only) */}
+                {limits && usage && (
+                  <UsagePill
+                    commitsUsed={commitsUsed}
+                    commitsTotal={commitsTotal}
+                    reposUsed={reposUsed}
+                    reposTotal={reposTotal}
+                    contribUsed={contribUsed}
+                    contribTotal={contribTotal}
+                  />
                 )}
+
+                {/* Avatar + Dropdown */}
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    aria-label="Toggle profile menu"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-neutral-900 to-neutral-700 dark:from-neutral-600 dark:to-white text-white dark:text-black font-semibold cursor-pointer select-none"
+                  >
+                    {getInitials(user?.personalDetails?.fullName)}
+                  </button>
+
+                  {dropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-64 rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-lg py-1 z-50 font-sans">
+                      {/* Usage summary card */}
+                      {limits && usage && (
+                        <UsageDropdownCard
+                          commitsUsed={commitsUsed}
+                          commitsTotal={commitsTotal}
+                          reposUsed={reposUsed}
+                          reposTotal={reposTotal}
+                          contribUsed={contribUsed}
+                          contribTotal={contribTotal}
+                        />
+                      )}
+
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <IconUser />
+                        Profile
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 cursor-pointer"
+                      >
+                        <IconLogout />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -158,8 +182,78 @@ export function FloatingNavbar() {
               </a>
             ))}
 
+            {/* Mobile usage block */}
+            {user && limits && usage && (
+              <div className="mt-3 rounded-md border border-neutral-300 dark:border-neutral-700 p-3 text-sm text-neutral-800 dark:text-neutral-200">
+                <div className="mb-2 font-medium">Usage</div>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Commits</span>
+                    <span>
+                      {commitsUsed}/{commitsTotal}
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full rounded bg-neutral-200 dark:bg-neutral-800">
+                    <div
+                      className="h-1.5 rounded bg-neutral-800 dark:bg-white"
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          Math.round(
+                            (commitsTotal ? commitsUsed / commitsTotal : 0) *
+                              100
+                          )
+                        )}%`,
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex justify-between mt-2">
+                    <span>Repositories</span>
+                    <span>
+                      {reposUsed}/{reposTotal}
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full rounded bg-neutral-200 dark:bg-neutral-800">
+                    <div
+                      className="h-1.5 rounded bg-neutral-800 dark:bg-white"
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          Math.round(
+                            (reposTotal ? reposUsed / reposTotal : 0) * 100
+                          )
+                        )}%`,
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex justify-between mt-2">
+                    <span>Contributors</span>
+                    <span>
+                      {contribUsed}/{contribTotal}
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full rounded bg-neutral-200 dark:bg-neutral-800">
+                    <div
+                      className="h-1.5 rounded bg-neutral-800 dark:bg-white"
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          Math.round(
+                            (contribTotal ? contribUsed / contribTotal : 0) *
+                              100
+                          )
+                        )}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="flex w-full flex-col gap-4 pt-4 border-t border-neutral-300 dark:border-neutral-700">
-              {!isAuthenticated ? (
+              {!user ? (
                 <>
                   <NavbarButton
                     href="/login"

@@ -1,16 +1,19 @@
-import { Button } from "@/components/ui/button";
-import { useReviewStore } from "@/store/reviewStore";
 import { Contributor } from "@/lib/types/review";
 import Image from "next/image";
 
 interface ContributorListProps {
   contributors: Contributor[];
+  searchTerm: string;
+  setSearchTerm: (value: string) => void;
+  setSelectedContributor: (value: Contributor) => void;
 }
 
-export const ContributorList = ({ contributors }: ContributorListProps) => {
-  const { searchTerm, setSearchTerm, setSelectedContributor } =
-    useReviewStore();
-
+export const ContributorList = ({
+  contributors,
+  searchTerm,
+  setSearchTerm,
+  setSelectedContributor,
+}: ContributorListProps) => {
   return (
     <>
       <div className="w-full mt-8 flex justify-between items-center mb-3 px-2">
@@ -49,18 +52,13 @@ export const ContributorList = ({ contributors }: ContributorListProps) => {
                 <span className="bg-indigo-700/30 text-indigo-300 px-3 py-1 rounded-full text-sm">
                   {contributor.contributions} contributions
                 </span>
-                {!contributor.site_admin && (
-                  <span className="bg-gray-700/50 px-3 py-1 rounded-full text-xs">
-                    User
-                  </span>
-                )}
               </div>
-              <Button
+              {/* <Button
                 variant="ghost"
                 className="mt-4 text-violet-400 hover:text-white hover:bg-violet-800 transition-all"
               >
                 Select Contributor
-              </Button>
+              </Button> */}
             </div>
           ))
         ) : (
