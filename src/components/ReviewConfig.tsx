@@ -115,7 +115,7 @@ export const ReviewConfig = ({
             githubUrl,
             login: selectedContributor.login,
             socketId,
-            topCommits: 1,
+            topCommits: commitCount || 3,
           })
         }
         disabled={isReviewing || !socketId}
