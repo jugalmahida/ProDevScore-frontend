@@ -47,7 +47,7 @@ export default function GenerateReview() {
         </h2>
 
         <p className="mb-4 text-center text-sm text-neutral-600 dark:text-neutral-400">
-          This beta version, push your patience limits.
+          This beta version & Hosted on render so push your patience limits.
         </p>
 
         {/* Medium-width input container */}
