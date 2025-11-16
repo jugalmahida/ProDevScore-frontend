@@ -20,7 +20,7 @@ export const HoverEffect = ({
     // lg:grid-cols-2 -> lg:grid-cols-3 if 3 cards
     <div
       className={cn(
-        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2  relative z-10 py-10 max-w-7xl mx-auto",
+        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  relative z-10 py-10 max-w-7xl mx-auto",
         className
       )}
     >

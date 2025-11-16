@@ -1,46 +1,47 @@
-"use client"
+"use client";
 import { HoverEffect } from "@/components/ui/card-hover-effect";
-import {
-  IconEaseInOut,
-} from "@tabler/icons-react";
+import { IconCurrencyDollar, IconEaseInOut } from "@tabler/icons-react";
 
 export function Pricing() {
   const features = [
     {
       title: "Free",
-      description:
-        "This plan for the freelancer, students.",
+      description: "This plan for the freelancer, students.",
       link: "",
       highlights: [
         "For Small Users",
-        "Limited 2 Repository",
-        "Limited 5 commits to review",
+        "Limited 1 Repository",
+        "Limited 2 contributors",
+        "Limited 3 commits per contributor",
+        "Total 6 commits",
       ],
     },
     {
-      title: "Pro (699 / Month)",
-      description:
-        "This plan for the companies whose looking for the employee's performance based on code and commits.",
+      title: "Pro (399 / Month)",
+      description: "This plan for the startup companies.",
       icon: <IconEaseInOut />,
       link: "",
       highlights: [
-        "For Companies",
-        "Unlimited repository",
-        "Unlimited commits to review",
+        "For The Startup Companies",
+        "10 Repository",
+        "10 Contributors",
+        "Max 5 commits per contributor",
+        "Total 50 commits",
       ],
     },
-    // {
-    //   title: "Enterprise (899 / Month)",
-    //   description:
-    //     "Our prices are best in the market. No cap, no lock, no credit card required.",
-    //   icon: <IconCurrencyDollar />,
-    //   link: "",
-    //   highlights: [
-    //     "For Small User",
-    //     "Only 3 Review",
-    //     "Only top 5 commit review",
-    //   ],
-    // },
+    {
+      title: "Enterprise (799 / Month)",
+      description: "This plan for the big tech companies.",
+      icon: <IconCurrencyDollar />,
+      link: "",
+      highlights: [
+        "For Big tech companies",
+        "50 Repository",
+        "50 Contributors",
+        "Max 15 commits per contributor",
+        "Total 750 commits",
+      ],
+    },
   ];
   return (
     <div id="pricing">
