@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   Dialog,
@@ -25,35 +25,46 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { login, loading, error, isUnverified, verifyCode } = useAuth();
+  const { login, loading, error, verifyCode } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showVerificationPopup, setShowVerificationPopup] = useState(false);
   const [otp, setOtp] = useState("");
+  const [redirecting, setRedirecting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login({ email, password });
-  };
-
-  useEffect(() => {
-    if (isUnverified) {
+    const res = await login({ email, password });
+    if (res === "USER_UNVERIFIED") {
       setOtp("");
       setShowVerificationPopup(true);
+    } else if (res === undefined) {
+      // Login successful (no return value means success)
+      setRedirecting(true);
     }
-  }, [isUnverified]);
+  };
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const successMessage = await verifyCode({ email, code: parseInt(otp) });
-
     if (successMessage) {
-      // On success: close popup, show alert, and redirect
       setShowVerificationPopup(false);
+      setRedirecting(true);
     }
   };
+
+  // Show loading overlay during redirect
+  if (redirecting) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-sm text-muted-foreground">Redirecting...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -65,7 +76,7 @@ export function LoginForm({
           <CardContent>
             <form onSubmit={handleSubmit}>
               {error && (
-                <p className="text-center text-md text-red-600">{error}</p>
+                <p className="text-center text-md mb-2 text-red-600">{error}</p>
               )}
               <div className="grid gap-6">
                 <div className="grid gap-3">

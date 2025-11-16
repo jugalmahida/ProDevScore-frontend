@@ -25,7 +25,7 @@ export async function loginAction(payload: LoginPayload) {
       return {
         success: false,
         message: response.message || "Login failed",
-        details: response.details
+        details: response.details,
       };
     }
     return {
@@ -35,6 +35,18 @@ export async function loginAction(payload: LoginPayload) {
   } catch (e: unknown) {
     const error = normalizeError(e);
     console.error("Error Login user: ", error);
+    // Check if this is an unverified user error
+    if (
+      error.message === "Verification code is already send to email" ||
+      error.message?.includes("verification code") ||
+      error.details === "USER_UNVERIFIED"
+    ) {
+      return {
+        success: false,
+        message: error.message,
+        details: "USER_UNVERIFIED",
+      };
+    }
     return error;
   }
 }
