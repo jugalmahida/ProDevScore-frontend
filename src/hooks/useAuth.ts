@@ -23,6 +23,7 @@ export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isUnverified, setIsUnverified] = useState<boolean>(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -49,6 +50,7 @@ export const useAuth = () => {
       setLoading(false);
       return null;
     }
+    setIsUnverified(false); // Reset unverified state
     router.replace("/");
     router.refresh();
     setLoading(false);
@@ -56,10 +58,18 @@ export const useAuth = () => {
 
   const login = async (payload: LoginPayload) => {
     setError(null);
+    setIsUnverified(false);
     setLoading(true);
     const result = await loginAction(payload);
+
     if (!result?.success) {
       setError(result?.message);
+      // Check if the error is due to unverified account
+      if (result?.details === "USER_UNVERIFIED") {
+        // console.log(result);
+        setIsUnverified(true);
+        setError("");
+      }
       setLoading(false);
       return;
     }
@@ -140,6 +150,7 @@ export const useAuth = () => {
     user,
     loading,
     error,
+    isUnverified,
     register,
     verifyCode,
     login,

@@ -15,13 +15,6 @@ import { cookies } from "next/headers";
 import { saveCookiesFromResponse } from "@/services/apiClient";
 import { normalizeError } from "@/utils/httpError";
 
-// interface ApiResponse {
-//   success: boolean;
-//   count?: number;
-//   message?: string;
-//   data?: object;
-// }
-
 export async function loginAction(payload: LoginPayload) {
   try {
     const apiService = await createServerApiService();
@@ -32,6 +25,7 @@ export async function loginAction(payload: LoginPayload) {
       return {
         success: false,
         message: response.message || "Login failed",
+        details: response.details
       };
     }
     return {
