@@ -11,6 +11,7 @@ import {
   forgetPasswordAction,
   getCurrentUserAction,
   loginAction,
+  loginWithGithubAction,
   logoutAction,
   registerAction,
   verifyCodeAction,
@@ -38,6 +39,17 @@ export const useAuth = () => {
     }
     setLoading(false);
     return true; // Return success
+  };
+
+  const loginWithGithub = async () => {
+    setError(null);
+    const response = await loginWithGithubAction();
+    if (!response?.success) {
+      setError(response?.message);
+    }
+    if (response.data?.url) {
+      router.push(response.data.url);
+    }
   };
 
   const verifyCode = async (payload: VerifyCodePayload) => {
@@ -151,6 +163,7 @@ export const useAuth = () => {
     register,
     verifyCode,
     login,
+    loginWithGithub,
     logout,
     getCurrentUser,
     forgetPassword,

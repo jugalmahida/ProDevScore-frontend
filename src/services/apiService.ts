@@ -24,6 +24,11 @@ export class ApiService {
     return response.data;
   }
 
+  async loginUserWithGithubUser() {
+    const response = await this.apiClient.get(`/user/github`);
+    return response.data;
+  }
+
   async getCurrentUser() {
     const response = await this.apiClient.get(`/user/me`);
     return response.data;

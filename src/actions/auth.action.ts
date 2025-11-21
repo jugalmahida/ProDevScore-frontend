@@ -12,7 +12,10 @@ import { createServerApiService } from "@/services/apiService";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { saveCookiesFromResponse } from "@/services/apiClient";
+import {
+  saveCookiesFromResponse,
+  saveStateCookiesFromGithub,
+} from "@/services/apiClient";
 import { normalizeError } from "@/utils/httpError";
 
 export async function loginAction(payload: LoginPayload) {
@@ -47,6 +50,19 @@ export async function loginAction(payload: LoginPayload) {
         details: "USER_UNVERIFIED",
       };
     }
+    return error;
+  }
+}
+
+export async function loginWithGithubAction() {
+  try {
+    const apiService = await createServerApiService();
+    const res = await apiService.loginUserWithGithubUser();
+    await saveStateCookiesFromGithub(res.data);
+    return res;
+  } catch (e: unknown) {
+    const error = normalizeError(e);
+    console.error("Error verify token and set password action:", error);
     return error;
   }
 }
@@ -105,13 +121,6 @@ export async function registerAction(payload: RegisterPayload) {
   try {
     const apiService = await createServerApiService();
     const response = await apiService.registerUser(payload);
-
-    if (!(response.success || response.count > 0)) {
-      return {
-        success: false,
-        message: response.message || "Registration failed",
-      };
-    }
     return response;
   } catch (e: unknown) {
     const error = normalizeError(e);
@@ -126,12 +135,6 @@ export async function verifyCodeAction(payload: VerifyCodePayload) {
     const response = await apiService.verifyCode(payload);
     // Save cookies from response
     await saveCookiesFromResponse(response.data?.tokens);
-    if (!(response.success || response.count > 0 || response.data?.user)) {
-      return {
-        success: false,
-        message: response.message || "Verification failed",
-      };
-    }
     return response;
   } catch (e: unknown) {
     const error = normalizeError(e);

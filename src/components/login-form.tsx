@@ -1,7 +1,13 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
@@ -20,12 +26,19 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "@/components/ui/field";
+import { loginWithGithubAction } from "@/actions/auth.action";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { login, loading, error, verifyCode } = useAuth();
+  const { login, loading, error, verifyCode, loginWithGithub } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -72,15 +85,48 @@ export function LoginForm({
         <Card>
           <CardHeader className="text-center">
             <CardTitle className="text-xl">Welcome Back</CardTitle>
+            <CardDescription>Login with your Github account</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit}>
-              {error && (
-                <p className="text-center text-md mb-2 text-red-600">{error}</p>
-              )}
-              <div className="grid gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
+              <FieldGroup>
+                <Field>
+                  <Button
+                    className="cursor-pointer"
+                    variant="outline"
+                    type="button"
+                    onClick={loginWithGithub}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-github-icon lucide-github"
+                    >
+                      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                      <path d="M9 18c-4.51 2-5-2-7-2" />
+                    </svg>
+                    Login with Github
+                  </Button>
+                </Field>
+                <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+                  Or continue with
+                </FieldSeparator>
+
+                {error && (
+                  <p className="text-center text-md mb-2 text-red-600">
+                    {error}
+                  </p>
+                )}
+
+                <Field>
+                  <FieldLabel htmlFor="email">Email</FieldLabel>
                   <Input
                     id="email"
                     type="email"
@@ -90,12 +136,10 @@ export function LoginForm({
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={loading}
                   />
-                </div>
+                </Field>
 
-                <div className="grid gap-3">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                  </div>
+                <Field>
+                  <FieldLabel htmlFor="password">Password</FieldLabel>
 
                   <div className="relative">
                     <Input
@@ -162,21 +206,25 @@ export function LoginForm({
                       Forgot your password?
                     </Link>
                   </div>
-                </div>
+                </Field>
                 <Button
                   type="submit"
-                  className="w-full cursor-pointer mb-5"
+                  className="w-full cursor-pointer"
                   disabled={loading}
                 >
                   {loading ? "Logging in..." : "Login"}
                 </Button>
-              </div>
-              <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link href="/register" className="underline underline-offset-4">
-                  Sign up
-                </Link>
-              </div>
+
+                <div className="text-center text-sm">
+                  Don&apos;t have an account?{" "}
+                  <Link
+                    href="/register"
+                    className="underline underline-offset-4"
+                  >
+                    Sign up
+                  </Link>
+                </div>
+              </FieldGroup>
             </form>
           </CardContent>
         </Card>

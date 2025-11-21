@@ -53,6 +53,11 @@ export type Tokens = {
   refreshToken: string;
 };
 
+export type Github = {
+  url: string;
+  state: string;
+};
+
 export type Cookies = {
   set: (
     key: string,

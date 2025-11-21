@@ -3,7 +3,7 @@ import AppConstants from "@/constants/appconstants";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { cookies } from "next/headers";
 import { refreshTokenAction } from "@/actions/auth.action";
-import { Tokens } from "@/lib/types/auth";
+import { Github, Tokens } from "@/lib/types/auth";
 
 export const serverApiClient = async () => {
   const cookieStore = await cookies();
@@ -19,7 +19,7 @@ export const serverApiClient = async () => {
     .join("; ");
 
   const serverClient = axios.create({
-    baseURL: AppConstants.apiUrl,
+    baseURL: AppConstants.localApiUrl,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -115,11 +115,27 @@ export const saveCookiesFromResponse = async (response: Tokens) => {
   }
 };
 
+export const saveStateCookiesFromGithub = async (response: Github) => {
+  if (!response) return;
+  const cookieStore = await cookies();
+
+  if (response.state && response.url) {
+    cookieStore.set("github_oauth_state", response.state, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 10 * 60, // 10 minutes in seconds
+      path: "/",
+    });
+  }
+};
+
 export const deleteCookies = async () => {
   const cookieStore = await cookies();
 
   cookieStore.delete("accessToken");
   cookieStore.delete("refreshToken");
+  cookieStore.delete("github_oauth_state");
 };
 
 interface RetryConfig extends InternalAxiosRequestConfig {
