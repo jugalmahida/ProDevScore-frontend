@@ -9,17 +9,19 @@ export const serverApiClient = async () => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
   const refreshToken = cookieStore.get("refreshToken")?.value;
+  const github_oauth_state = cookieStore.get("github_oauth_state")?.value;
 
   // Build cookie header string
   const cookieHeader = [
     accessToken && `accessToken=${accessToken}`,
     refreshToken && `refreshToken=${refreshToken}`,
+    github_oauth_state && `github_oauth_state=${github_oauth_state}`,
   ]
     .filter(Boolean)
     .join("; ");
 
   const serverClient = axios.create({
-    baseURL: AppConstants.localApiUrl,
+    baseURL: AppConstants.apiUrl,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

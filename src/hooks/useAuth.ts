@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   ForgetPasswordPayload,
+  GithubCallBack,
   LoginPayload,
   RegisterPayload,
   User,
@@ -12,6 +13,7 @@ import {
   getCurrentUserAction,
   loginAction,
   loginWithGithubAction,
+  loginWithGithubCallBackAction,
   logoutAction,
   registerAction,
   verifyCodeAction,
@@ -27,6 +29,10 @@ export const useAuth = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  // In useAuth hook, add this:
+  const [githubCallbackStatus, setGithubCallbackStatus] = useState<
+    "idle" | "loading" | "error"
+  >("idle");
 
   const register = async (payload: RegisterPayload): Promise<boolean> => {
     setError(null);
@@ -52,6 +58,36 @@ export const useAuth = () => {
     }
   };
 
+  const loginWithGithubCallback = async (payload: GithubCallBack) => {
+    setError(null);
+    setGithubCallbackStatus("loading");
+
+    if (!payload.code || !payload.state) {
+      setError("Missing authorization code or state");
+      setGithubCallbackStatus("error");
+      return;
+    }
+
+    try {
+      const response = await loginWithGithubCallBackAction(payload);
+      if (!response?.success) {
+        setError(response?.message || "GitHub login failed");
+        setGithubCallbackStatus("error");
+        return;
+      }
+      // Success - redirect to dashboard
+      router.replace("/");
+      router.refresh();
+    } catch (e) {
+      setError("An unexpected error occurred");
+      setGithubCallbackStatus("error");
+    }
+  };
+
+  const goToLogin = () => {
+    router.push("/login");
+  };
+
   const verifyCode = async (payload: VerifyCodePayload) => {
     setError(null);
     setLoading(true);
@@ -74,7 +110,11 @@ export const useAuth = () => {
     if (!result?.success) {
       setError(result?.message);
       // Check if the error is due to unverified account
-      if (result?.details === "USER_UNVERIFIED") {
+      if (
+        result?.details === "USER_UNVERIFIED" ||
+        result.message === "Verification code is already send to email" ||
+        result.message?.includes("verification code")
+      ) {
         // console.log(result);
         setError("");
         setLoading(false);
@@ -83,11 +123,17 @@ export const useAuth = () => {
       setLoading(false);
       return;
     }
-    // On success, redirect and refresh
-    setLoading(false);
-    const redirectTo = searchParams.get("redirect") || "/";
-    router.replace(redirectTo);
-    router.refresh();
+
+    if (result.success) {
+      // On success, redirect and refresh
+      setLoading(false);
+      const redirectTo = searchParams.get("redirect") || "/";
+      router.replace(redirectTo);
+      router.refresh();
+    } else {
+      setLoading(false);
+      setError("Unknown error while login");
+    }
   };
 
   // Load user on mount - but skip on auth pages
@@ -160,10 +206,13 @@ export const useAuth = () => {
     user,
     loading,
     error,
+    githubCallbackStatus,
     register,
     verifyCode,
     login,
+    goToLogin,
     loginWithGithub,
+    loginWithGithubCallback,
     logout,
     getCurrentUser,
     forgetPassword,

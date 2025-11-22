@@ -10,6 +10,7 @@ import {
   ChangePasswordPayload,
   GetContributorsPayload,
   StartReviewPayload,
+  GithubCallBack,
 } from "@/lib/types/auth";
 
 export class ApiService {
@@ -26,6 +27,13 @@ export class ApiService {
 
   async loginUserWithGithubUser() {
     const response = await this.apiClient.get(`/user/github`);
+    return response.data;
+  }
+
+  async loginUserWithGithubCallBack(payload: GithubCallBack) {
+    const response = await this.apiClient.get(
+      `/user/github/callback?code=${payload.code}&state=${payload.state}`
+    );
     return response.data;
   }
 

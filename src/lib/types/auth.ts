@@ -58,6 +58,12 @@ export type Github = {
   state: string;
 };
 
+export type GithubCallBack = {
+  code: string;
+  state: string;
+};
+
+
 export type Cookies = {
   set: (
     key: string,

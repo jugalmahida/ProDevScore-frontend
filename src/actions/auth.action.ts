@@ -2,6 +2,7 @@
 
 import {
   ForgetPasswordPayload,
+  GithubCallBack,
   LoginPayload,
   RegisterPayload,
   User,
@@ -24,32 +25,10 @@ export async function loginAction(payload: LoginPayload) {
     const response = await apiService.loginUser(payload);
     // Save cookies from response
     await saveCookiesFromResponse(response.data.tokens);
-    if (!(response.success || response.count > 0 || response.data?.user)) {
-      return {
-        success: false,
-        message: response.message || "Login failed",
-        details: response.details,
-      };
-    }
-    return {
-      success: true,
-      user: response.data.user,
-    };
+    return response;
   } catch (e: unknown) {
     const error = normalizeError(e);
     console.error("Error Login user: ", error);
-    // Check if this is an unverified user error
-    if (
-      error.message === "Verification code is already send to email" ||
-      error.message?.includes("verification code") ||
-      error.details === "USER_UNVERIFIED"
-    ) {
-      return {
-        success: false,
-        message: error.message,
-        details: "USER_UNVERIFIED",
-      };
-    }
     return error;
   }
 }
@@ -59,6 +38,20 @@ export async function loginWithGithubAction() {
     const apiService = await createServerApiService();
     const res = await apiService.loginUserWithGithubUser();
     await saveStateCookiesFromGithub(res.data);
+    return res;
+  } catch (e: unknown) {
+    const error = normalizeError(e);
+    console.error("Error verify token and set password action:", error);
+    return error;
+  }
+}
+
+export async function loginWithGithubCallBackAction(payload: GithubCallBack) {
+  try {
+    const apiService = await createServerApiService();
+    const res = await apiService.loginUserWithGithubCallBack(payload);
+    // Save cookies from response
+    await saveCookiesFromResponse(res?.data?.tokens);
     return res;
   } catch (e: unknown) {
     const error = normalizeError(e);
