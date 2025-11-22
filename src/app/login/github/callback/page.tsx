@@ -1,9 +1,10 @@
 "use client";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { LoaderOne } from "@/components/ui/loader";
 
-export default function GithubCallback() {
+function GithubCallbackContent() {
   const searchParams = useSearchParams();
   const { loginWithGithubCallback, githubCallbackStatus, error, goToLogin } =
     useAuth();
@@ -35,5 +36,19 @@ export default function GithubCallback() {
         <p className="text-muted-foreground">Completing GitHub login...</p>
       </div>
     </div>
+  );
+}
+
+export default function GithubCallback() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center">
+          <LoaderOne />
+        </div>
+      }
+    >
+      <GithubCallbackContent />
+    </Suspense>
   );
 }
