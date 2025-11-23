@@ -21,15 +21,14 @@ import {
 } from "@/actions/auth.action";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-// managing the states of ui and calling the server actions
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [redirecting, setRedirecting] = useState<boolean>(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  // In useAuth hook, add this:
   const [githubCallbackStatus, setGithubCallbackStatus] = useState<
     "idle" | "loading" | "error"
   >("idle");
@@ -41,10 +40,10 @@ export const useAuth = () => {
     if (!response?.success) {
       setError(response?.message);
       setLoading(false);
-      return false; // Return failure
+      return false;
     }
     setLoading(false);
-    return true; // Return success
+    return true;
   };
 
   const loginWithGithub = async () => {
@@ -75,12 +74,16 @@ export const useAuth = () => {
         setGithubCallbackStatus("error");
         return;
       }
-      // Success - redirect to dashboard
-      router.replace("/");
-      router.refresh();
+      // Set redirecting state before navigation
+      setRedirecting(true);
+      setTimeout(() => {
+        router.replace("/");
+        router.refresh();
+      }, 1500);
     } catch (e) {
       setError("An unexpected error occurred");
       setGithubCallbackStatus("error");
+      console.log("Error in github callback " + e);
     }
   };
 
@@ -97,9 +100,12 @@ export const useAuth = () => {
       setLoading(false);
       return null;
     }
-    router.replace("/");
-    router.refresh();
     setLoading(false);
+    setRedirecting(true);
+    setTimeout(() => {
+      router.replace("/");
+      router.refresh();
+    }, 1500);
   };
 
   const login = async (payload: LoginPayload) => {
@@ -115,7 +121,6 @@ export const useAuth = () => {
         result.message === "Verification code is already send to email" ||
         result.message?.includes("verification code")
       ) {
-        // console.log(result);
         setError("");
         setLoading(false);
         return "USER_UNVERIFIED";
@@ -125,11 +130,15 @@ export const useAuth = () => {
     }
 
     if (result.success) {
-      // On success, redirect and refresh
       setLoading(false);
+      setRedirecting(true);
       const redirectTo = searchParams.get("redirect") || "/";
-      router.replace(redirectTo);
-      router.refresh();
+
+      // Add slight delay for better UX
+      setTimeout(() => {
+        router.replace(redirectTo);
+        router.refresh();
+      }, 1500);
     } else {
       setLoading(false);
       setError("Unknown error while login");
@@ -184,14 +193,12 @@ export const useAuth = () => {
     if (!result == true) {
       return false;
     }
-    setTimeout(() => router.replace("/login"), 3 * 1000);
+    setRedirecting(true);
+    setTimeout(() => router.replace("/login"), 3000);
     setLoading(false);
     return true;
   };
 
-  /**
-   * Logs out the current user.
-   */
   const logout = async () => {
     setError(null);
     setLoading(true);
@@ -206,6 +213,7 @@ export const useAuth = () => {
     user,
     loading,
     error,
+    redirecting,
     githubCallbackStatus,
     register,
     verifyCode,

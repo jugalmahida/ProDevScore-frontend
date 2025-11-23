@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
@@ -32,19 +31,19 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
-import { loginWithGithubAction } from "@/actions/auth.action";
+import { Redirecting } from "@/components/Redirecting";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { login, loading, error, verifyCode, loginWithGithub } = useAuth();
+  const { login, loading, error, verifyCode, loginWithGithub, redirecting } =
+    useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showVerificationPopup, setShowVerificationPopup] = useState(false);
   const [otp, setOtp] = useState("");
-  const [redirecting, setRedirecting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,9 +51,6 @@ export function LoginForm({
     if (res === "USER_UNVERIFIED") {
       setOtp("");
       setShowVerificationPopup(true);
-    } else if (res === undefined) {
-      // Login successful (no return value means success)
-      setRedirecting(true);
     }
   };
 
@@ -63,20 +59,12 @@ export function LoginForm({
     const successMessage = await verifyCode({ email, code: parseInt(otp) });
     if (successMessage) {
       setShowVerificationPopup(false);
-      setRedirecting(true);
     }
   };
 
-  // Show loading overlay during redirect
+  // Show redirecting component during redirect
   if (redirecting) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="text-sm text-muted-foreground">Redirecting...</p>
-        </div>
-      </div>
-    );
+    return <Redirecting message="Login Successful!" />;
   }
 
   return (
@@ -85,7 +73,7 @@ export function LoginForm({
         <Card>
           <CardHeader className="text-center">
             <CardTitle className="text-xl">Welcome Back</CardTitle>
-            <CardDescription>Login with your Github account</CardDescription>
+            <CardDescription>Continue with your Github account</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit}>
@@ -112,7 +100,7 @@ export function LoginForm({
                       <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
                       <path d="M9 18c-4.51 2-5-2-7-2" />
                     </svg>
-                    Login with Github
+                    Continue with Github
                   </Button>
                 </Field>
                 <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
@@ -120,9 +108,7 @@ export function LoginForm({
                 </FieldSeparator>
 
                 {error && (
-                  <p className="text-center text-md mb-2 text-red-600">
-                    {error}
-                  </p>
+                  <p className="text-center text-md text-red-600">{error}</p>
                 )}
 
                 <Field>

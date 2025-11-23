@@ -28,7 +28,7 @@ export async function loginAction(payload: LoginPayload) {
     return response;
   } catch (e: unknown) {
     const error = normalizeError(e);
-    console.error("Error Login user: ", error);
+    // console.error("Error Login user: ", error);
     return error;
   }
 }
