@@ -21,7 +21,7 @@ export const serverApiClient = async () => {
     .join("; ");
 
   const serverClient = axios.create({
-    baseURL: AppConstants.localApiUrl,
+    baseURL: AppConstants.apiUrl,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
