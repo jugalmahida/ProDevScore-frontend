@@ -63,7 +63,6 @@ export type GithubCallBack = {
   state: string;
 };
 
-
 export type Cookies = {
   set: (
     key: string,
@@ -119,4 +118,9 @@ export interface StartReviewPayload {
 
 export interface GetContributorsPayload {
   githubUrl: string;
+}
+
+export interface GetContributorDataPayload {
+  githubUrl: string;
+  login: string;
 }

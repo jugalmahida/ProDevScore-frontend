@@ -49,6 +49,59 @@ export interface Contributor {
   site_admin: boolean;
 }
 
+// Updated Contributor type to match API response
+export interface ContributorProfile {
+  login: string;
+  name: string;
+  avatar_url: string;
+  bio: string | null;
+  company: string | null;
+  location: string | null;
+  email: string | null;
+  blog: string;
+  twitter_username: string | null;
+  public_repos: number;
+  followers: number;
+  following: number;
+  created_at: string;
+}
+
+export interface ContributorData {
+  profile: ContributorProfile;
+  repository: {
+    name: string;
+    owner: string;
+    full_name: string;
+  };
+  contributions: {
+    total_commits: number;
+    total_contributions: number;
+    first_commit_date: string;
+    last_commit_date: string;
+    recent_commits_30_days: number;
+  };
+  statistics: {
+    lines_added: number;
+    lines_deleted: number;
+    total_changes: number;
+  };
+  topCommit: {
+    sha: string;
+    message: string;
+    date: string;
+    additions: number;
+    deletions: number;
+    total_changes: number;
+    files_changed: number;
+  } | null;
+  recentCommits: Array<{
+    sha: string;
+    message: string;
+    date: string;
+    url: string;
+  }>;
+}
+
 export interface ReviewState {
   // GitHub URL
   githubUrl: string;

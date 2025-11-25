@@ -11,6 +11,7 @@ import {
   GetContributorsPayload,
   StartReviewPayload,
   GithubCallBack,
+  GetContributorDataPayload,
 } from "@/lib/types/auth";
 
 export class ApiService {
@@ -106,6 +107,13 @@ export class ApiService {
       `/review/getContributors`,
       payload
     );
+    return response.data;
+  }
+
+  async getContributorData(payload: GetContributorDataPayload) {
+    const response = await this.apiClient.get(`/review/getContributorData`, {
+      params: payload,
+    });
     return response.data;
   }
 

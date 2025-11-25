@@ -2,12 +2,22 @@ import { useEffect, useMemo, useState } from "react";
 import { Socket } from "socket.io-client";
 
 import {
+  getContributorDataAction,
   getContributorsAction,
   startReviewAction,
 } from "@/actions/codereview.action";
 
-import { GetContributorsPayload, StartReviewPayload } from "@/lib/types/auth";
-import { FinalResults, ReviewProgress, Contributor } from "@/lib/types/review";
+import {
+  GetContributorDataPayload,
+  GetContributorsPayload,
+  StartReviewPayload,
+} from "@/lib/types/auth";
+import {
+  FinalResults,
+  ReviewProgress,
+  Contributor,
+  ContributorData,
+} from "@/lib/types/review";
 import { socketService } from "@/services/socketService";
 
 export const useReviewCode = () => {
@@ -17,6 +27,7 @@ export const useReviewCode = () => {
 
   // contributors states
   const [contributors, setContributors] = useState<Contributor[]>([]);
+  const [contributor, setContributor] = useState<ContributorData | undefined>();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedContributor, setSelectedContributor] =
     useState<Contributor | null>();
@@ -76,6 +87,21 @@ export const useReviewCode = () => {
     setLoading(false);
   };
 
+  const getContributorData = async (payload: GetContributorDataPayload) => {
+    setError(null);
+    setLoading(true);
+    const response = await getContributorDataAction(payload);
+    if (!response.success) {
+      setError(response.message);
+      setContributor(undefined);
+      setLoading(false);
+      return null;
+    }
+    setContributor(response.data);
+    setLoading(false);
+    return response.data;
+  };
+
   const startCodeReview = async (payload: StartReviewPayload) => {
     if (!selectedContributor || !socketId) return;
 
@@ -110,6 +136,8 @@ export const useReviewCode = () => {
     loading,
     error,
     getContributors,
+    getContributorData,
+    contributor,
     filteredContributors,
     searchTerm,
     setSearchTerm,
