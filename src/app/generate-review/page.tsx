@@ -39,7 +39,8 @@ export default function GenerateReview() {
   };
 
   return (
-    <BackgroundLines className="h-full w-full">
+    // <BackgroundLines className="h-full w-full">
+    <>
       {/* Wide page container */}
       <div className="container mx-auto max-w-screen-xl px-4 py-5 sm:px-6">
         <h2 className="mb-3 sm:mb-5 text-xl sm:text-4xl font-bold text-neutral-900 dark:text-white text-center">
@@ -108,6 +109,7 @@ export default function GenerateReview() {
           </div>
         )}
       </div>
-    </BackgroundLines>
+    </>
+    // </BackgroundLines>
   );
 }
