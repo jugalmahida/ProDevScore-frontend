@@ -7,19 +7,15 @@ import { Contributor, FinalResults } from "@/lib/types/review";
 
 interface ReviewResultsProps {
   finalResults: FinalResults;
-  selectedContributor: Contributor;
   setFinalResults: (value: FinalResults | null) => void;
   setSelectedContributor: (value: Contributor | null) => void;
 }
 
 export const ReviewResults = ({
   finalResults,
-  selectedContributor,
   setFinalResults,
   setSelectedContributor,
 }: ReviewResultsProps) => {
-  if (!finalResults || !selectedContributor) return null;
-
   return (
     <div className="w-full mt-8 max-w-6xl space-y-6">
       {/* Summary Cards */}

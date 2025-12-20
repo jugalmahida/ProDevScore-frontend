@@ -29,6 +29,8 @@ export default function GenerateReview() {
     socketId,
     startCodeReview,
     setFinalResults,
+    contributor,
+    getContributorData,
   } = useReviewCode();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -93,16 +95,17 @@ export default function GenerateReview() {
               socketId={socketId}
               startCodeReview={startCodeReview}
               githubUrl={githubUrl}
+              getContributorData={getContributorData}
+              contributor={contributor}
             />
           </div>
         )}
 
         {/* Results (centered and wide) */}
-        {finalResults && selectedContributor && (
+        {finalResults && (
           <div className="mt-6">
             <ReviewResults
               finalResults={finalResults}
-              selectedContributor={selectedContributor}
               setFinalResults={setFinalResults}
               setSelectedContributor={setSelectedContributor}
             />

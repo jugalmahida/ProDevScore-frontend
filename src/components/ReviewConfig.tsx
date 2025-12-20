@@ -12,10 +12,13 @@ import {
   ExternalLink,
 } from "lucide-react";
 import Image from "next/image";
-import { Contributor, ReviewProgress } from "@/lib/types/review";
+import {
+  Contributor,
+  ReviewProgress,
+  ContributorData,
+} from "@/lib/types/review";
 import { StartReviewPayload } from "@/lib/types/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { useReviewCode } from "@/hooks/useReviewCode";
 
 interface ReviewConfigProps {
   selectedContributor: Contributor;
@@ -25,6 +28,9 @@ interface ReviewConfigProps {
   reviewProgress: ReviewProgress | null;
   startCodeReview: (payload: StartReviewPayload) => void;
   githubUrl: string;
+  // Add these props from parent hook
+  getContributorData: (payload: any) => Promise<ContributorData | null>;
+  contributor: ContributorData | undefined;
 }
 
 export const ReviewConfig = ({
@@ -35,9 +41,10 @@ export const ReviewConfig = ({
   socketId,
   startCodeReview,
   githubUrl,
+  getContributorData,
+  contributor,
 }: ReviewConfigProps) => {
   const { user } = useAuth();
-  const { getContributorData, contributor } = useReviewCode();
 
   const [loadingDetails, setLoadingDetails] = useState(false);
 
@@ -197,7 +204,7 @@ export const ReviewConfig = ({
               </div>
             )}
 
-            {/* Recent Commits Section - Moved here */}
+            {/* Recent Commits Section */}
             {contributor?.recentCommits &&
               contributor.recentCommits.length > 0 && (
                 <div className="w-full mb-6">
