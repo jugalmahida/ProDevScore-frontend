@@ -8,7 +8,9 @@ export function Footer() {
         <div className="flex items-center gap-3">
           {/* (Optional) Add your logo here for left alignment if desired */}
           {/* <span className="rounded-full bg-gradient-to-tr from-neutral-600 to-black text-white px-3 py-2 mr-2 font-bold text-lg">P</span> */}
-          <span>© 2025 ProDevScore. All rights reserved.</span>
+          <span>
+            © {new Date().getFullYear()} ProDevScore. All rights reserved.
+          </span>
         </div>
         <nav className="flex space-x-6 mt-4 md:mt-0">
           <Link href="#features" className="hover:text-white transition-colors">
